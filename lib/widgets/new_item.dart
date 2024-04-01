@@ -16,6 +16,7 @@ class _NewItemState extends State<NewItem>{
 
   void _saveItem(){
     _formKey.currentState!.validate();
+    _formKey.currentState!.save();
   }
 
   @override
@@ -41,6 +42,7 @@ class _NewItemState extends State<NewItem>{
                   }
                   return null;
                 },
+                onSaved: (value){},
               ), //Instead of textField
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -92,7 +94,9 @@ class _NewItemState extends State<NewItem>{
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      _formKey.currentState!.reset();
+                    },
                     child: const Text('Reset'),
                   ),
                   const SizedBox(width: 10,),

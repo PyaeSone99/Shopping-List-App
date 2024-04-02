@@ -40,7 +40,6 @@ class _NewItemState extends State<NewItem>{
               'category': _selectedCategory.title
             },
           ));
-      print(response.statusCode);
       if (!mounted) {
         return;
       }

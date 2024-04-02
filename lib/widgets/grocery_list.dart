@@ -37,6 +37,12 @@ class _GroceryListState extends State<GroceryList> {
       });
     }
 
+    if (response.body == 'null') {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
     final Map<String,dynamic> listData = json.decode(response.body);
     final List<GroceryItem> loadedItems = []; 
     
@@ -69,10 +75,38 @@ class _GroceryListState extends State<GroceryList> {
       _isLoading = false;
     });
   }
-  void _removeItem (GroceryItem item){
+  void _removeItem(GroceryItem item) async {
+    final index = _groceryItem.indexOf(item);
     setState(() {
       _groceryItem.remove(item);
     });
+    final url =
+        Uri.https('flutter-shopping-list-11108-default-rtdb.firebaseio.com', 'shopping-list/${item.id}.json');
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      setState(() {
+        _groceryItem.insert(index, item);
+      });
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Error"),
+              content: const Text("Failed to delete item. Please try again."),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   @override
